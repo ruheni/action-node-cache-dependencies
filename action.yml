@@ -9,7 +9,7 @@ runs:
       with:
         path: |
           **/node_modules
-        key: yarn-cache-${{ hashFiles('**/package-lock.json') }}
+        key: npm-cache-${{ hashFiles('**/package-lock.json') }}
     - name: Install Dependencies
       if: steps.npm-cache.outputs.cache-hit != 'true'
       shell: bash
