@@ -1,30 +1,16 @@
 name: Cache node_modules
 description: Cache node_modules after install
-inputs:
-  postinstall:
-    description: Run yarn postinstall. By default will run if that npm script is present in the package.json file.
-    required: false
-    default: 'true'
 runs:
   using: composite
   steps:
     - name: Cache node_modules
       uses: actions/cache@v2
-      id: yarn-cache
+      id: npm-cache
       with:
         path: |
           **/node_modules
-        key: yarn-cache-${{ hashFiles('**/yarn.lock') }}
+        key: yarn-cache-${{ hashFiles('**/package-lock.json') }}
     - name: Install Dependencies
-      if: steps.yarn-cache.outputs.cache-hit != 'true'
+      if: steps.npm-cache.outputs.cache-hit != 'true'
       shell: bash
-      run: corepack enable && yarn install --immutable
-    - name: Postinstall
-      if: inputs.postinstall == 'true'
-      shell: bash
-      run: |
-        if cat package.json | grep '"postinstall":' > /dev/null; then
-          yarn run postinstall
-        else
-          echo "Skipping, no postinstall script to execute."
-        fi
+      run: corepack enable && npm i install
